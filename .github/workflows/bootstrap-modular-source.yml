@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - bootstrap/modular-source.b64
+      - bootstrap/READY
 
 permissions:
   contents: write
@@ -17,11 +17,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Unpack modular source
+      - name: Reassemble and unpack modular source
         shell: bash
         run: |
           set -euo pipefail
-          base64 --decode bootstrap/modular-source.b64 > /tmp/jewelry-theme.zip
+          cat bootstrap/part-* > /tmp/jewelry-theme.b64
+          base64 --decode /tmp/jewelry-theme.b64 > /tmp/jewelry-theme.zip
+          unzip -t /tmp/jewelry-theme.zip
           unzip -o /tmp/jewelry-theme.zip -d .
           rm -rf bootstrap
           rm -f .github/workflows/bootstrap-modular-source.yml
