@@ -29,6 +29,9 @@
   let dragCommitIndex = null;
   let transitionToken = 0;
   let progressAnimation = null;
+  let autoplayTimer = null;
+  let autoplayElapsed = 0;
+  let autoplayStartedAt = 0;
   let parallaxFrame = 0;
   let parallaxX = 0;
   let parallaxY = 0;
@@ -63,34 +66,122 @@
       : `inset(0 0 0 ${hidden}%)`;
   };
 
-  const clearProgress = () => {
+  const getProgressBar = () => tabs[getActiveIndex()]?.querySelector('.hero-rail-progress') || null;
+
+  const clearAutoplayTimer = () => {
+    if (!autoplayTimer) return;
+    clearTimeout(autoplayTimer);
+    autoplayTimer = null;
+  };
+
+  const cancelProgressAnimation = ({ reset = false } = {}) => {
     if (progressAnimation) {
       progressAnimation.cancel();
       progressAnimation = null;
     }
-    tabs.forEach((tab) => {
-      const bar = tab.querySelector('.hero-rail-progress');
-      if (bar) bar.style.transform = 'scaleX(0)';
-    });
+
+    if (reset) {
+      tabs.forEach((tab) => {
+        const bar = tab.querySelector('.hero-rail-progress');
+        if (bar) bar.style.transform = 'scaleX(0)';
+      });
+    }
   };
 
-  const restartProgress = () => {
-    clearProgress();
-    if (reduceMotion.matches || document.hidden || pauseButton?.getAttribute('aria-pressed') === 'true') return;
+  const shouldHoldAutoplay = () => (
+    reduceMotion.matches ||
+    document.hidden ||
+    pauseButton?.getAttribute('aria-pressed') === 'true' ||
+    drag !== null ||
+    isSettlingDrag ||
+    hero.matches(':hover') ||
+    hero.contains(document.activeElement)
+  );
 
-    const activeTab = tabs[getActiveIndex()];
-    const bar = activeTab?.querySelector('.hero-rail-progress');
+  const syncElapsed = () => {
+    if (!autoplayStartedAt) return;
+    autoplayElapsed = Math.min(
+      AUTOPLAY_MS,
+      autoplayElapsed + Math.max(0, performance.now() - autoplayStartedAt)
+    );
+    autoplayStartedAt = 0;
+  };
+
+  const buildProgressAnimation = () => {
+    cancelProgressAnimation();
+    if (reduceMotion.matches) return;
+
+    const bar = getProgressBar();
     if (!bar) return;
 
+    const from = Math.max(0, Math.min(1, autoplayElapsed / AUTOPLAY_MS));
+    const remaining = Math.max(0, AUTOPLAY_MS - autoplayElapsed);
+    bar.style.transform = `scaleX(${from})`;
+
+    if (remaining <= 0) return;
+
     progressAnimation = bar.animate(
-      [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }],
-      { duration: AUTOPLAY_MS, easing: 'linear', fill: 'forwards' }
+      [{ transform: `scaleX(${from})` }, { transform: 'scaleX(1)' }],
+      { duration: remaining, easing: 'linear', fill: 'forwards' }
     );
   };
 
-  const pauseProgress = () => {
+  const pauseAutoplay = () => {
+    syncElapsed();
+    clearAutoplayTimer();
     progressAnimation?.pause();
   };
+
+  const resumeAutoplay = () => {
+    if (shouldHoldAutoplay()) return;
+
+    const remaining = Math.max(0, AUTOPLAY_MS - autoplayElapsed);
+    if (remaining <= 0) return;
+
+    clearAutoplayTimer();
+    autoplayStartedAt = performance.now();
+
+    if (progressAnimation?.playState === 'paused') {
+      progressAnimation.play();
+    } else if (!progressAnimation || progressAnimation.playState === 'idle') {
+      buildProgressAnimation();
+    }
+
+    autoplayTimer = window.setTimeout(() => {
+      syncElapsed();
+      clearAutoplayTimer();
+      const nextIndex = wrapIndex(getActiveIndex() + 1);
+      desiredDirection = 'forward';
+      hero.dataset.heroDirection = 'forward';
+      tabs[nextIndex]?.click();
+    }, remaining);
+  };
+
+  const resetAutoplayCycle = ({ start = true } = {}) => {
+    clearAutoplayTimer();
+    autoplayElapsed = 0;
+    autoplayStartedAt = 0;
+    cancelProgressAnimation({ reset: true });
+    buildProgressAnimation();
+
+    if (start) {
+      if (shouldHoldAutoplay()) progressAnimation?.pause();
+      else resumeAutoplay();
+    } else {
+      progressAnimation?.pause();
+    }
+  };
+
+  /*
+    Homepage.js owns the basic slide state and registered hover/focus listeners
+    before this motion layer loads. Retire its interval, then replace its global
+    start/stop hooks with pause/resume semantics so all existing listeners keep
+    working without resetting elapsed autoplay time.
+  */
+  const legacyStopAutoplay = window.stopHeroAutoplay;
+  if (typeof legacyStopAutoplay === 'function') legacyStopAutoplay();
+  window.stopHeroAutoplay = pauseAutoplay;
+  window.startHeroAutoplay = resumeAutoplay;
 
   const animateRailMeta = () => {
     if (reduceMotion.matches) return;
@@ -139,10 +230,6 @@
     hero.dataset.heroDirection = direction;
   };
 
-  const endAutoplayHold = () => {
-    hero.dispatchEvent(new Event('mouseleave'));
-  };
-
   const settleDrag = (commit) => {
     if (!drag || isSettlingDrag) return;
 
@@ -159,8 +246,7 @@
     if (!state.previewSlide || !state.previewArt || !state.direction) {
       drag = null;
       isSettlingDrag = false;
-      restartProgress();
-      endAutoplayHold();
+      resumeAutoplay();
       return;
     }
 
@@ -192,12 +278,11 @@
         });
       } else {
         clearPreview(state.previewSlide);
-        restartProgress();
       }
 
       drag = null;
       isSettlingDrag = false;
-      endAutoplayHold();
+      if (!commit) resumeAutoplay();
     }, settleDuration + 20);
   };
 
@@ -207,7 +292,12 @@
     if (!tab) return;
 
     const nextIndex = Number(tab.dataset.heroSlide);
-    if (!Number.isInteger(nextIndex) || nextIndex === activeIndex) return;
+    if (!Number.isInteger(nextIndex)) return;
+
+    if (nextIndex === activeIndex) {
+      requestAnimationFrame(() => resetAutoplayCycle());
+      return;
+    }
 
     desiredDirection = directionBetween(activeIndex, nextIndex);
     hero.dataset.heroDirection = desiredDirection;
@@ -221,12 +311,6 @@
       slides[nextIndex]?.classList.remove('hero-reveal-complete');
     }
   }, true);
-
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      requestAnimationFrame(restartProgress);
-    });
-  });
 
   /*
     Homepage.js owns the canonical active state. This observer only layers the
@@ -262,7 +346,7 @@
     desiredDirection = null;
     dragCommitIndex = null;
 
-    restartProgress();
+    resetAutoplayCycle();
     animateRailMeta();
 
     const cleanupDelay = reduceMotion.matches ? 0 : REVEAL_MS + 80;
@@ -296,8 +380,7 @@
       previewArt: null
     };
 
-    pauseProgress();
-    hero.dispatchEvent(new Event('mouseenter'));
+    pauseAutoplay();
   });
 
   hero.addEventListener('pointermove', (event) => {
@@ -339,8 +422,7 @@
       if (drag.previewSlide) clearPreview(drag.previewSlide);
       hero.classList.remove('is-hero-dragging');
       drag = null;
-      restartProgress();
-      endAutoplayHold();
+      resumeAutoplay();
       return;
     }
 
@@ -357,28 +439,28 @@
   hero.addEventListener('pointerup', (event) => finishPointerGesture(event));
   hero.addEventListener('pointercancel', (event) => finishPointerGesture(event, true));
 
-  hero.addEventListener('mouseenter', pauseProgress);
+  /*
+    These listeners mirror the legacy behavior, but pause/resume the same clock.
+    If hover/focus overlap, shouldHoldAutoplay prevents an early resume.
+  */
+  hero.addEventListener('mouseenter', pauseAutoplay);
   hero.addEventListener('mouseleave', () => {
-    if (!drag && pauseButton?.getAttribute('aria-pressed') !== 'true') restartProgress();
+    if (!drag) resumeAutoplay();
   });
 
-  hero.addEventListener('focusin', pauseProgress);
+  hero.addEventListener('focusin', pauseAutoplay);
   hero.addEventListener('focusout', () => {
-    requestAnimationFrame(() => {
-      if (!hero.contains(document.activeElement) && pauseButton?.getAttribute('aria-pressed') !== 'true') {
-        restartProgress();
-      }
-    });
+    requestAnimationFrame(resumeAutoplay);
   });
 
   pauseButton?.addEventListener('click', () => {
-    if (pauseButton.getAttribute('aria-pressed') === 'true') pauseProgress();
-    else restartProgress();
+    if (pauseButton.getAttribute('aria-pressed') === 'true') pauseAutoplay();
+    else resumeAutoplay();
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) pauseProgress();
-    else if (pauseButton?.getAttribute('aria-pressed') !== 'true') restartProgress();
+    if (document.hidden) pauseAutoplay();
+    else resumeAutoplay();
   });
 
   const renderParallax = () => {
@@ -429,9 +511,10 @@
 
   reduceMotion.addEventListener?.('change', () => {
     resetParallax();
-    restartProgress();
+    if (reduceMotion.matches) pauseAutoplay();
+    else resetAutoplayCycle();
   });
 
   hero.dataset.heroDirection = 'forward';
-  restartProgress();
+  resetAutoplayCycle();
 })();
