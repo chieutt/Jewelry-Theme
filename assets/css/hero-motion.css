@@ -10,39 +10,91 @@
   --hero-reveal-ease:cubic-bezier(.22,.74,.18,1);
 }
 
-/* Keep slide geometry untouched; motion replaces the generic crossfade. */
+/*
+  Two-layer transition model:
+  - outgoing slide stays rendered underneath
+  - incoming slide sits above it
+  - only the incoming art is clipped, so the previous artwork remains visible
+*/
 [data-section="01 Editorial slideshow"] .slide{
+  z-index:0;
   opacity:0!important;
   visibility:hidden;
+  pointer-events:none;
   transition:opacity .18s ease,visibility 0s linear .95s!important;
 }
 
-[data-section="01 Editorial slideshow"] .slide.active{
+[data-section="01 Editorial slideshow"] .slide.hero-outgoing{
+  z-index:1;
   opacity:1!important;
-  visibility:visible;
+  visibility:visible!important;
+  pointer-events:none!important;
   transition:none!important;
 }
 
-/* Direction-aware artwork reveal. */
-[data-section="01 Editorial slideshow"] .slide-art{
-  will-change:clip-path;
+[data-section="01 Editorial slideshow"] .slide.active{
+  z-index:2;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto;
+  transition:none!important;
 }
 
-[data-section="01 Editorial slideshow"] .slide.active .slide-art{
+/* Drag preview is artwork-only; current copy remains untouched until commit. */
+[data-section="01 Editorial slideshow"] .slide.hero-preview{
+  z-index:3;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:none!important;
+  transition:none!important;
+}
+
+[data-section="01 Editorial slideshow"] .slide.hero-preview .slide-copy{
+  visibility:hidden!important;
+}
+
+[data-section="01 Editorial slideshow"] .slide-art{
+  will-change:clip-path;
+  -webkit-user-select:none;
+  user-select:none;
+  touch-action:pan-y;
+}
+
+@media(hover:hover) and (pointer:fine){
+  [data-section="01 Editorial slideshow"] .slide.active .slide-art{
+    cursor:grab;
+  }
+
+  [data-section="01 Editorial slideshow"].is-hero-dragging .slide-art{
+    cursor:grabbing;
+  }
+}
+
+/*
+  Direction follows the gesture:
+  forward = swipe/drag left, incoming artwork travels right → left
+  backward = swipe/drag right, incoming artwork travels left → right
+*/
+[data-section="01 Editorial slideshow"] .slide.active:not(.hero-reveal-complete) .slide-art{
   animation:hero-art-reveal-forward var(--hero-reveal-duration) var(--hero-reveal-ease) both;
 }
 
-[data-section="01 Editorial slideshow"][data-hero-direction="backward"] .slide.active .slide-art{
+[data-section="01 Editorial slideshow"][data-hero-direction="backward"] .slide.active:not(.hero-reveal-complete) .slide-art{
   animation-name:hero-art-reveal-backward;
 }
 
+[data-section="01 Editorial slideshow"] .slide.active.hero-reveal-complete .slide-art{
+  animation:none!important;
+  clip-path:inset(0 0 0 0)!important;
+}
+
 @keyframes hero-art-reveal-forward{
-  0%{clip-path:inset(0 100% 0 0)}
+  0%{clip-path:inset(0 0 0 100%)}
   100%{clip-path:inset(0 0 0 0)}
 }
 
 @keyframes hero-art-reveal-backward{
-  0%{clip-path:inset(0 0 0 100%)}
+  0%{clip-path:inset(0 100% 0 0)}
   100%{clip-path:inset(0 0 0 0)}
 }
 
@@ -74,7 +126,7 @@
   100%{opacity:1;transform:translate3d(0,0,0)}
 }
 
-/* Object study: line work draws itself while the panel is revealed. */
+/* Object study: line work draws itself on non-drag transitions. */
 [data-section="01 Editorial slideshow"] .slide-art svg{
   opacity:.94!important;
   transform:translate3d(var(--hero-parallax-x),var(--hero-parallax-y),0) scale(1.018)!important;
@@ -87,15 +139,21 @@
   transform:translate3d(var(--hero-parallax-x),var(--hero-parallax-y),0) scale(1)!important;
 }
 
-[data-section="01 Editorial slideshow"] .slide.active .slide-art svg > *{
+[data-section="01 Editorial slideshow"] .slide.active:not(.hero-reveal-complete) .slide-art svg > *{
   stroke-dasharray:1800;
   stroke-dashoffset:1800;
   animation:hero-line-draw 1.45s cubic-bezier(.2,.65,.2,1) forwards;
 }
 
-[data-section="01 Editorial slideshow"] .slide.active .slide-art svg > :nth-child(2n){animation-delay:.08s}
-[data-section="01 Editorial slideshow"] .slide.active .slide-art svg > :nth-child(3n){animation-delay:.14s}
-[data-section="01 Editorial slideshow"] .slide.active .slide-art svg > :nth-child(5n){animation-delay:.20s}
+[data-section="01 Editorial slideshow"] .slide.active:not(.hero-reveal-complete) .slide-art svg > :nth-child(2n){animation-delay:.08s}
+[data-section="01 Editorial slideshow"] .slide.active:not(.hero-reveal-complete) .slide-art svg > :nth-child(3n){animation-delay:.14s}
+[data-section="01 Editorial slideshow"] .slide.active:not(.hero-reveal-complete) .slide-art svg > :nth-child(5n){animation-delay:.20s}
+
+[data-section="01 Editorial slideshow"] .slide.active.hero-reveal-complete .slide-art svg > *{
+  animation:none!important;
+  stroke-dasharray:none!important;
+  stroke-dashoffset:0!important;
+}
 
 @keyframes hero-line-draw{
   to{stroke-dashoffset:0}
@@ -142,12 +200,11 @@
     bottom:6px;
   }
 
-  /* Keep mobile motion faster and lighter. */
   [data-section="01 Editorial slideshow"]{
     --hero-reveal-duration:720ms;
   }
 
-  [data-section="01 Editorial slideshow"] .slide.active .slide-art svg > *{
+  [data-section="01 Editorial slideshow"] .slide.active:not(.hero-reveal-complete) .slide-art svg > *{
     animation-duration:1.05s;
   }
 }
