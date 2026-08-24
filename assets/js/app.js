@@ -4,7 +4,8 @@ const scriptQueue = [
   'assets/js/gift-bundle.js',
   'assets/js/sticky-atelier.js',
   'assets/js/featured-product.js',
-  'assets/js/navigation.js'
+  'assets/js/navigation.js',
+  'assets/js/motion.js'
 ];
 
 async function hydrateIncludes(root = document) {
