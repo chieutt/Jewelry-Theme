@@ -1,5 +1,5 @@
 /* ============================================================
-   v10.8 — UI alignment refinements
+   v10.9 — UI alignment refinements
    S03 Image Banner / S08 Video / S17 Social Gallery
    Global tokens live in base.css
    ============================================================ */
@@ -13,7 +13,7 @@
   max-width:620px!important;
 }
 
-/* S08 — center the content block in the frame while preserving left-aligned typography. */
+/* S08 — centered campaign copy, centered typography, no play control. */
 [data-section="08 Video banner"] .video-overlay{
   background:linear-gradient(90deg,
     rgba(5,17,14,.22) 0%,
@@ -28,23 +28,29 @@
   left:50%!important;
   right:auto!important;
   transform:translate(-50%,-50%)!important;
-  width:min(680px,56vw)!important;
-  max-width:680px!important;
-  text-align:left!important;
+  width:min(720px,62vw)!important;
+  max-width:720px!important;
+  align-items:center!important;
+  text-align:center!important;
 }
 
 [data-section="08 Video banner"] .video-copy .eyebrow,
 [data-section="08 Video banner"] .video-copy .h2,
 [data-section="08 Video banner"] .video-meta{
-  text-align:left!important;
+  width:100%;
+  text-align:center!important;
+}
+
+[data-section="08 Video banner"] .video-copy .h2{
+  margin-inline:auto!important;
 }
 
 [data-section="08 Video banner"] .video-meta{
-  justify-content:flex-start!important;
+  justify-content:center!important;
 }
 
 [data-section="08 Video banner"] .video-play{
-  right:max(var(--gutter),calc((100vw - var(--container))/2))!important;
+  display:none!important;
 }
 
 /* S17 — disciplined gallery system. */
@@ -104,11 +110,7 @@
   }
 
   [data-section="08 Video banner"] .video-copy{
-    width:min(560px,58vw)!important;
-  }
-
-  [data-section="08 Video banner"] .video-play{
-    right:var(--gutter)!important;
+    width:min(600px,68vw)!important;
   }
 
   [data-section="17 Instagram gallery"] .social-runway,
@@ -151,19 +153,13 @@
   }
 
   [data-section="08 Video banner"] .video-copy{
-    top:58%!important;
+    top:54%!important;
     bottom:auto!important;
     left:50%!important;
     right:auto!important;
     transform:translate(-50%,-50%)!important;
     width:calc(100% - (var(--gutter) * 2))!important;
     max-width:none!important;
-  }
-
-  [data-section="08 Video banner"] .video-play{
-    top:22%!important;
-    right:var(--gutter)!important;
-    transform:none!important;
   }
 
   [data-section="17 Instagram gallery"]{
