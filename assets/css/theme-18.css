@@ -1,12 +1,8 @@
 /* ============================================================
-   v10.8 — Global container alignment
-   1600px max container / 60px desktop gutters
+   v10.8 — UI alignment refinements
+   S03 Image Banner / S08 Video / S17 Social Gallery
+   Global tokens live in base.css
    ============================================================ */
-
-:root{
-  --container:1600px;
-  --gutter:60px;
-}
 
 /* S03 — keep campaign media full-bleed, but align copy to the global container edge. */
 [data-section="03 Image Banner"] .banner-copy{
@@ -51,7 +47,7 @@
   right:max(var(--gutter),calc((100vw - var(--container))/2))!important;
 }
 
-/* S17 — replace the offset runway with one disciplined gallery system. */
+/* S17 — disciplined gallery system. */
 [data-section="17 Instagram gallery"]{
   padding:80px 0 96px!important;
   overflow:hidden!important;
@@ -101,10 +97,6 @@
 }
 
 @media(max-width:1000px){
-  :root{
-    --gutter:32px;
-  }
-
   [data-section="03 Image Banner"] .banner-copy{
     left:var(--gutter)!important;
     bottom:48px!important;
@@ -143,10 +135,6 @@
 }
 
 @media(max-width:760px){
-  :root{
-    --gutter:20px;
-  }
-
   [data-section="03 Image Banner"] .banner-copy{
     left:var(--gutter)!important;
     right:var(--gutter)!important;
