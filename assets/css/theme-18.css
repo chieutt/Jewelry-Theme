@@ -1,0 +1,192 @@
+/* ============================================================
+   v10.7 — UI alignment refinements
+   S03 Image Banner / S08 Video / S17 Social Gallery
+   ============================================================ */
+
+/* S03 — keep campaign media full-bleed, but give copy a premium inner inset. */
+[data-section="03 Image Banner"] .banner-copy{
+  left:max(64px,calc((100vw - var(--container))/2 + 64px))!important;
+  right:auto!important;
+  bottom:64px!important;
+  width:min(620px,calc(100% - 128px))!important;
+  max-width:620px!important;
+}
+
+/* S08 — center the content block in the frame while preserving left-aligned typography. */
+[data-section="08 Video banner"] .video-overlay{
+  background:linear-gradient(90deg,
+    rgba(5,17,14,.22) 0%,
+    rgba(5,17,14,.68) 34%,
+    rgba(5,17,14,.72) 66%,
+    rgba(5,17,14,.20) 100%)!important;
+}
+
+[data-section="08 Video banner"] .video-copy{
+  top:50%!important;
+  bottom:auto!important;
+  left:50%!important;
+  right:auto!important;
+  transform:translate(-50%,-50%)!important;
+  width:min(680px,56vw)!important;
+  max-width:680px!important;
+  text-align:left!important;
+}
+
+[data-section="08 Video banner"] .video-copy .eyebrow,
+[data-section="08 Video banner"] .video-copy .h2,
+[data-section="08 Video banner"] .video-meta{
+  text-align:left!important;
+}
+
+[data-section="08 Video banner"] .video-meta{
+  justify-content:flex-start!important;
+}
+
+[data-section="08 Video banner"] .video-play{
+  right:max(48px,calc((100vw - var(--container))/2 + 48px))!important;
+}
+
+/* S17 — replace the offset runway with one disciplined gallery system. */
+[data-section="17 Instagram gallery"]{
+  padding:80px 0 96px!important;
+  overflow:hidden!important;
+}
+
+[data-section="17 Instagram gallery"] .social-head{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:24px!important;
+  margin-bottom:32px!important;
+}
+
+[data-section="17 Instagram gallery"] .social-runway,
+[data-section="17 Instagram gallery"] .social-offset-strip{
+  width:100%!important;
+  height:auto!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  grid-template-rows:auto!important;
+  gap:16px!important;
+  align-items:start!important;
+  overflow:visible!important;
+  padding:0!important;
+}
+
+[data-section="17 Instagram gallery"] .social-runway-item{
+  min-width:0!important;
+  margin:0!important;
+  transform:none!important;
+  display:block!important;
+}
+
+[data-section="17 Instagram gallery"] .social-runway-media,
+[data-section="17 Instagram gallery"] .social-runway-item--1 .social-runway-media,
+[data-section="17 Instagram gallery"] .social-runway-item:not(.social-runway-item--1) .social-runway-media{
+  width:100%!important;
+  aspect-ratio:4/5!important;
+}
+
+[data-section="17 Instagram gallery"] .social-runway-caption{
+  min-height:0!important;
+  padding-top:12px!important;
+  align-items:center!important;
+  font-size:8px!important;
+  line-height:1.2!important;
+}
+
+@media(max-width:1000px){
+  [data-section="03 Image Banner"] .banner-copy{
+    left:48px!important;
+    bottom:48px!important;
+    width:min(600px,calc(100% - 96px))!important;
+  }
+
+  [data-section="08 Video banner"] .video-copy{
+    width:min(560px,58vw)!important;
+  }
+
+  [data-section="08 Video banner"] .video-play{
+    right:32px!important;
+  }
+
+  [data-section="17 Instagram gallery"] .social-runway,
+  [data-section="17 Instagram gallery"] .social-offset-strip{
+    width:calc(100% + 24px)!important;
+    display:flex!important;
+    gap:12px!important;
+    align-items:flex-start!important;
+    overflow:auto hidden!important;
+    padding:0 24px 8px 0!important;
+    scroll-snap-type:x proximity;
+    scrollbar-width:none;
+  }
+
+  [data-section="17 Instagram gallery"] .social-runway::-webkit-scrollbar,
+  [data-section="17 Instagram gallery"] .social-offset-strip::-webkit-scrollbar{
+    display:none;
+  }
+
+  [data-section="17 Instagram gallery"] .social-runway-item{
+    flex:0 0 38vw!important;
+    scroll-snap-align:start;
+  }
+}
+
+@media(max-width:760px){
+  [data-section="03 Image Banner"] .banner-copy{
+    left:24px!important;
+    right:24px!important;
+    bottom:32px!important;
+    width:auto!important;
+    max-width:none!important;
+  }
+
+  [data-section="08 Video banner"] .video-overlay{
+    background:linear-gradient(0deg,
+      rgba(5,17,14,.84) 0%,
+      rgba(5,17,14,.60) 54%,
+      rgba(5,17,14,.14) 100%)!important;
+  }
+
+  [data-section="08 Video banner"] .video-copy{
+    top:58%!important;
+    bottom:auto!important;
+    left:50%!important;
+    right:auto!important;
+    transform:translate(-50%,-50%)!important;
+    width:calc(100% - 48px)!important;
+    max-width:none!important;
+  }
+
+  [data-section="08 Video banner"] .video-play{
+    top:22%!important;
+    right:24px!important;
+    transform:none!important;
+  }
+
+  [data-section="17 Instagram gallery"]{
+    padding:64px 0 72px!important;
+  }
+
+  [data-section="17 Instagram gallery"] .social-head{
+    display:block!important;
+    margin-bottom:24px!important;
+  }
+
+  [data-section="17 Instagram gallery"] .social-handle{
+    display:inline-block!important;
+    margin-top:16px!important;
+  }
+
+  [data-section="17 Instagram gallery"] .social-runway,
+  [data-section="17 Instagram gallery"] .social-offset-strip{
+    width:calc(100% + 16px)!important;
+    gap:10px!important;
+    padding-right:16px!important;
+  }
+
+  [data-section="17 Instagram gallery"] .social-runway-item{
+    flex-basis:72vw!important;
+  }
+}
