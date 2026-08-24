@@ -46,6 +46,10 @@
 /* S07 — Featured Edit
    Keep product media square. Slightly shorten the promo canvas so its
    bottom edge locks with the 2x2 product plane instead of hanging lower. */
+[data-section="07 Editorial collection tabs"] .featured-edit-promo-copy{
+  padding:40px!important;
+}
+
 @media(min-width:1100px){
   [data-section="07 Editorial collection tabs"] .featured-edit-grid{
     align-items:start!important;
@@ -138,6 +142,10 @@
 
   [data-section="03 Image Banner"] .banner-copy{
     bottom:24px!important;
+  }
+
+  [data-section="07 Editorial collection tabs"] .featured-edit-promo-copy{
+    padding:28px!important;
   }
 
   [data-section="14 Blog posts"]{
