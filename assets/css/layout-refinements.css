@@ -69,10 +69,6 @@
    A square product crop makes the panel more compact without changing
    the 7/5 section composition or hotspot interaction. */
 @media(min-width:761px){
-  [data-section="09 Shop the look"] .look-product-stage{
-    margin-top:24px!important;
-  }
-
   [data-section="09 Shop the look"] .product-card--look .product-card-media{
     aspect-ratio:1/1!important;
   }
@@ -152,4 +148,19 @@
   [data-section="14 Blog posts"] .journal-modern-card--side .journal-modern-copy{
     min-height:68px!important;
   }
+}
+
+/* Shared section-head compatibility guard.
+   The spacing token lives in base.css; this final rule wins over legacy
+   per-section margin declarations until the old theme chunks are cleaned up. */
+.section-head{
+  margin-bottom:var(--section-head-gap)!important;
+}
+
+.look-side-head.section-head{
+  display:block!important;
+}
+
+[data-section="09 Shop the look"] .look-product-stage{
+  margin-top:0!important;
 }
