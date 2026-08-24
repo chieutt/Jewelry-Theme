@@ -1,5 +1,6 @@
 const scriptQueue = [
   'assets/js/homepage.js',
+  'assets/js/hero-motion.js',
   'assets/js/gift-bundle.js',
   'assets/js/sticky-atelier.js',
   'assets/js/featured-product.js',
