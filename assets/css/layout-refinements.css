@@ -1,0 +1,124 @@
+/* ============================================================
+   SPINEL — Layout refinements
+   Targeted proportion + alignment fixes after homepage audit
+   ============================================================ */
+
+/* S05 — Collection Studies
+   Preserve the approved 4 / 2 / 2 / 4 mosaic, but give the two
+   portrait anchors enough vertical weight to read as portrait media. */
+@media(min-width:1001px){
+  [data-section="05 Collection list split promotions"] .collection-studies-mosaic{
+    height:520px!important;
+    grid-template-rows:minmax(0,1fr) minmax(0,.86fr)!important;
+    gap:12px!important;
+  }
+}
+
+@media(max-width:1000px) and (min-width:761px){
+  [data-section="05 Collection list split promotions"] .collection-studies-mosaic{
+    height:468px!important;
+    grid-template-rows:minmax(0,1fr) minmax(0,.88fr)!important;
+    gap:10px!important;
+  }
+}
+
+/* S07 — Featured Edit
+   Keep product media square. Slightly shorten the promo canvas so its
+   bottom edge locks with the 2x2 product plane instead of hanging lower. */
+@media(min-width:1100px){
+  [data-section="07 Editorial collection tabs"] .featured-edit-grid{
+    align-items:start!important;
+  }
+
+  [data-section="07 Editorial collection tabs"] .featured-edit-promo{
+    aspect-ratio:5/6!important;
+  }
+
+  [data-section="07 Editorial collection tabs"] .featured-edit-products .product-grid{
+    align-content:start!important;
+  }
+
+  [data-section="07 Editorial collection tabs"] .featured-edit-products .product-card-info{
+    min-height:68px!important;
+  }
+}
+
+/* S09 — Shop the Look
+   Commerce card was visually taller/heavier than the look image.
+   A square product crop makes the panel more compact without changing
+   the 7/5 section composition or hotspot interaction. */
+@media(min-width:761px){
+  [data-section="09 Shop the look"] .look-product-stage{
+    margin-top:24px!important;
+  }
+
+  [data-section="09 Shop the look"] .product-card--look .product-card-media{
+    aspect-ratio:1/1!important;
+  }
+
+  [data-section="09 Shop the look"] .product-card--look .product-card-info{
+    padding-top:12px!important;
+  }
+}
+
+/* S15 — Featured Product
+   Center the media object inside its column and rebalance the two-column
+   split so the empty space between artwork and commerce details is intentional. */
+@media(min-width:1100px){
+  [data-section="15 Featured Product"] .featured-refined-grid{
+    grid-template-columns:minmax(0,6.6fr) minmax(420px,5.4fr)!important;
+    gap:64px!important;
+    align-items:center!important;
+  }
+
+  [data-section="15 Featured Product"] .featured-refined-media{
+    width:min(100%,680px)!important;
+    max-width:680px!important;
+    justify-self:center!important;
+  }
+
+  [data-section="15 Featured Product"] .featured-refined-info{
+    width:100%;
+    max-width:540px!important;
+    justify-self:start;
+    align-self:center;
+  }
+}
+
+/* S14 — Journal
+   Lock supporting-story copy height so the four cards share a calm visual
+   baseline even when article titles have different lengths. */
+[data-section="14 Blog posts"]{
+  padding-top:88px!important;
+  padding-bottom:96px!important;
+}
+
+[data-section="14 Blog posts"] .journal-modern-card--side .journal-modern-copy{
+  min-height:74px!important;
+}
+
+[data-section="14 Blog posts"] .journal-modern-card--side h3{
+  min-height:2.04em;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+
+@media(max-width:1000px) and (min-width:761px){
+  [data-section="14 Blog posts"]{
+    padding-top:80px!important;
+    padding-bottom:88px!important;
+  }
+}
+
+@media(max-width:760px){
+  [data-section="14 Blog posts"]{
+    padding-top:64px!important;
+    padding-bottom:72px!important;
+  }
+
+  [data-section="14 Blog posts"] .journal-modern-card--side .journal-modern-copy{
+    min-height:68px!important;
+  }
+}
