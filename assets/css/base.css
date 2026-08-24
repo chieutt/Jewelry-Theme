@@ -5,10 +5,10 @@
 
 :root{
   /* Typography */
-  --font-heading:"Oranienbaum",Georgia,"Times New Roman",serif;
-  --font-body:"Figtree",Arial,Helvetica,sans-serif;
-  --serif:var(--font-heading);
-  --sans:var(--font-body);
+  --font-heading:"Oranienbaum",Georgia,"Times New Roman",serif!important;
+  --font-body:"Figtree",Arial,Helvetica,sans-serif!important;
+  --serif:var(--font-heading)!important;
+  --sans:var(--font-body)!important;
 
   --type-display-xl:100px;
   --type-display-l:88px;
@@ -23,8 +23,8 @@
   --type-label:9px;
 
   /* Layout */
-  --container:1600px;
-  --gutter:60px;
+  --container:1600px!important;
+  --gutter:60px!important;
 
   /* Spacing scale */
   --space-1:4px;
@@ -41,26 +41,26 @@
   --space-24:96px;
 
   /* Semantic surfaces */
-  --surface-white:#fff;
-  --surface-muted:#f8f5ef;
-  --surface-black:#090807;
-  --surface-accent:#2a1018;
+  --surface-white:#fff!important;
+  --surface-muted:#f8f5ef!important;
+  --surface-black:#090807!important;
+  --surface-accent:#2a1018!important;
 
   /* Core text / rules */
-  --ink:#151613;
-  --muted:#706a62;
-  --line:rgba(21,22,19,.12);
+  --ink:#151613!important;
+  --muted:#706a62!important;
+  --line:rgba(21,22,19,.12)!important;
 }
 
 @media(max-width:1000px){
   :root{
-    --gutter:32px;
+    --gutter:32px!important;
   }
 }
 
 @media(max-width:760px){
   :root{
-    --gutter:20px;
+    --gutter:20px!important;
     --type-display-xl:72px;
     --type-display-l:60px;
     --type-display-m:48px;
