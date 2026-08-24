@@ -6,7 +6,7 @@
 [data-section="01 Editorial slideshow"]{
   --hero-parallax-x:0px;
   --hero-parallax-y:0px;
-  --hero-reveal-duration:920ms;
+  --hero-reveal-duration:990ms;
   --hero-reveal-ease:cubic-bezier(.22,.74,.18,1);
 }
 
@@ -201,7 +201,7 @@
   }
 
   [data-section="01 Editorial slideshow"]{
-    --hero-reveal-duration:720ms;
+    --hero-reveal-duration:800ms;
   }
 
   [data-section="01 Editorial slideshow"] .slide.active:not(.hero-reveal-complete) .slide-art svg > *{
