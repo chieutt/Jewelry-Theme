@@ -39,6 +39,7 @@
   --space-16:64px;
   --space-20:80px;
   --space-24:96px;
+  --section-head-gap:var(--space-10);
 
   /* Semantic surfaces */
   --surface-white:#fff!important;
@@ -55,12 +56,14 @@
 @media(max-width:1000px){
   :root{
     --gutter:32px!important;
+    --section-head-gap:var(--space-8);
   }
 }
 
 @media(max-width:760px){
   :root{
     --gutter:20px!important;
+    --section-head-gap:var(--space-6);
     --type-display-xl:72px;
     --type-display-l:60px;
     --type-display-m:48px;
@@ -93,6 +96,11 @@ img,svg,video{display:block;max-width:100%}
 .container{
   width:min(calc(100% - (var(--gutter) * 2)),var(--container));
   margin-inline:auto;
+}
+
+/* Shared section heading rhythm */
+.section-head{
+  margin-bottom:var(--section-head-gap);
 }
 
 /* Shared typography primitives */
