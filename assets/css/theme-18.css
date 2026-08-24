@@ -1,14 +1,19 @@
 /* ============================================================
-   v10.7 — UI alignment refinements
-   S03 Image Banner / S08 Video / S17 Social Gallery
+   v10.8 — Global container alignment
+   1600px max container / 60px desktop gutters
    ============================================================ */
 
-/* S03 — keep campaign media full-bleed, but give copy a premium inner inset. */
+:root{
+  --container:1600px;
+  --gutter:60px;
+}
+
+/* S03 — keep campaign media full-bleed, but align copy to the global container edge. */
 [data-section="03 Image Banner"] .banner-copy{
-  left:max(64px,calc((100vw - var(--container))/2 + 64px))!important;
+  left:max(var(--gutter),calc((100vw - var(--container))/2))!important;
   right:auto!important;
   bottom:64px!important;
-  width:min(620px,calc(100% - 128px))!important;
+  width:min(620px,calc(100% - (var(--gutter) * 2)))!important;
   max-width:620px!important;
 }
 
@@ -43,7 +48,7 @@
 }
 
 [data-section="08 Video banner"] .video-play{
-  right:max(48px,calc((100vw - var(--container))/2 + 48px))!important;
+  right:max(var(--gutter),calc((100vw - var(--container))/2))!important;
 }
 
 /* S17 — replace the offset runway with one disciplined gallery system. */
@@ -96,10 +101,14 @@
 }
 
 @media(max-width:1000px){
+  :root{
+    --gutter:32px;
+  }
+
   [data-section="03 Image Banner"] .banner-copy{
-    left:48px!important;
+    left:var(--gutter)!important;
     bottom:48px!important;
-    width:min(600px,calc(100% - 96px))!important;
+    width:min(600px,calc(100% - (var(--gutter) * 2)))!important;
   }
 
   [data-section="08 Video banner"] .video-copy{
@@ -107,7 +116,7 @@
   }
 
   [data-section="08 Video banner"] .video-play{
-    right:32px!important;
+    right:var(--gutter)!important;
   }
 
   [data-section="17 Instagram gallery"] .social-runway,
@@ -134,9 +143,13 @@
 }
 
 @media(max-width:760px){
+  :root{
+    --gutter:20px;
+  }
+
   [data-section="03 Image Banner"] .banner-copy{
-    left:24px!important;
-    right:24px!important;
+    left:var(--gutter)!important;
+    right:var(--gutter)!important;
     bottom:32px!important;
     width:auto!important;
     max-width:none!important;
@@ -155,13 +168,13 @@
     left:50%!important;
     right:auto!important;
     transform:translate(-50%,-50%)!important;
-    width:calc(100% - 48px)!important;
+    width:calc(100% - (var(--gutter) * 2))!important;
     max-width:none!important;
   }
 
   [data-section="08 Video banner"] .video-play{
     top:22%!important;
-    right:24px!important;
+    right:var(--gutter)!important;
     transform:none!important;
   }
 
