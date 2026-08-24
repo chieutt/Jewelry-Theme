@@ -3,6 +3,19 @@
    Targeted proportion + alignment fixes after homepage audit
    ============================================================ */
 
+/* S03 — Campaign 02 / After dark
+   Reduce the full-bleed banner to roughly two-thirds of its former height
+   while preserving the campaign composition and copy alignment. */
+[data-section="03 Image Banner"]{
+  height:auto!important;
+  min-height:300px!important;
+  aspect-ratio:24/7!important;
+}
+
+[data-section="03 Image Banner"] .banner-copy{
+  bottom:40px!important;
+}
+
 /* S05 — Collection Studies
    Preserve the approved 4 / 2 / 2 / 4 mosaic, but give the two
    portrait anchors enough vertical weight to read as portrait media. */
@@ -15,6 +28,14 @@
 }
 
 @media(max-width:1000px) and (min-width:761px){
+  [data-section="03 Image Banner"]{
+    min-height:280px!important;
+  }
+
+  [data-section="03 Image Banner"] .banner-copy{
+    bottom:32px!important;
+  }
+
   [data-section="05 Collection list split promotions"] .collection-studies-mosaic{
     height:468px!important;
     grid-template-rows:minmax(0,1fr) minmax(0,.88fr)!important;
@@ -113,6 +134,16 @@
 }
 
 @media(max-width:760px){
+  [data-section="03 Image Banner"]{
+    height:240px!important;
+    min-height:240px!important;
+    aspect-ratio:auto!important;
+  }
+
+  [data-section="03 Image Banner"] .banner-copy{
+    bottom:24px!important;
+  }
+
   [data-section="14 Blog posts"]{
     padding-top:64px!important;
     padding-bottom:72px!important;
