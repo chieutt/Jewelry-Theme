@@ -11,9 +11,7 @@
   const lerp = (from, to, progress) => from + (to - from) * progress;
 
   let frame = 0;
-  let currentProgress = 0.5;
-  let targetProgress = 0.5;
-  let active = false;
+  let progress = 0.5;
 
   section.classList.add('is-marquee-parallax-ready');
 
@@ -24,55 +22,35 @@
     return clamp(window.innerWidth * 0.18, 150, 320);
   };
 
-  const measure = () => {
-    if (reduceMotion.matches) {
-      targetProgress = 0.5;
-      active = true;
-      requestTick();
-      return;
-    }
+  const render = () => {
+    frame = 0;
 
     const rect = section.getBoundingClientRect();
     const viewport = window.innerHeight || document.documentElement.clientHeight;
 
-    targetProgress = clamp((viewport - rect.top) / (viewport + rect.height), 0, 1);
-    active = rect.bottom > -viewport * 0.2 && rect.top < viewport * 1.2;
-
-    if (active) requestTick();
-  };
-
-  const render = () => {
-    frame = 0;
-
-    if (reduceMotion.matches) {
-      currentProgress = 0.5;
-    } else {
-      currentProgress += (targetProgress - currentProgress) * 0.14;
-    }
+    progress = reduceMotion.matches
+      ? 0.5
+      : clamp((viewport - rect.top) / (viewport + rect.height), 0, 1);
 
     const amplitude = getAmplitude();
 
-    // Opposing tracks create depth: the first row drifts left while the
-    // second row drifts right, with a slightly shorter travel on row two.
-    const primaryX = lerp(-amplitude * 0.12, -amplitude * 1.18, currentProgress);
-    const secondaryX = lerp(-amplitude * 1.02, -amplitude * 0.16, currentProgress);
+    // Pure scroll mapping: no inertia. When scrolling stops, both tracks stop
+    // on the exact same frame instead of easing toward a delayed target.
+    const primaryX = lerp(-amplitude * 0.12, -amplitude * 1.18, progress);
+    const secondaryX = lerp(-amplitude * 1.02, -amplitude * 0.16, progress);
 
     primary.style.transform = `translate3d(${primaryX.toFixed(2)}px, 0, 0)`;
     secondary.style.transform = `translate3d(${secondaryX.toFixed(2)}px, 0, 0)`;
-
-    if (!reduceMotion.matches && active && Math.abs(targetProgress - currentProgress) > 0.001) {
-      frame = requestAnimationFrame(render);
-    }
   };
 
-  function requestTick() {
+  const requestRender = () => {
     if (frame) return;
     frame = requestAnimationFrame(render);
-  }
+  };
 
-  window.addEventListener('scroll', measure, { passive: true });
-  window.addEventListener('resize', measure);
-  reduceMotion.addEventListener?.('change', measure);
+  window.addEventListener('scroll', requestRender, { passive: true });
+  window.addEventListener('resize', requestRender);
+  reduceMotion.addEventListener?.('change', requestRender);
 
-  measure();
+  requestRender();
 })();
