@@ -74,6 +74,16 @@ html.motion-ready .motion-reveal.motion-complete{
   opacity:1!important;
 }
 
+/* 06 — two-row scroll parallax marquee. */
+[data-section="06 Scrolling Text"].is-marquee-parallax-ready .marquee{
+  animation:none!important;
+  will-change:transform;
+}
+
+[data-section="06 Scrolling Text"].is-marquee-parallax-ready .marquee.reverse{
+  animation:none!important;
+}
+
 @media(max-width:760px){
   :root{
     --motion-duration:680ms;
@@ -94,5 +104,10 @@ html.motion-ready .motion-reveal.motion-complete{
     background:none!important;
     color:var(--highlight-fill-color)!important;
     -webkit-text-fill-color:currentColor!important;
+  }
+
+  [data-section="06 Scrolling Text"].is-marquee-parallax-ready .marquee{
+    transform:none!important;
+    will-change:auto;
   }
 }
