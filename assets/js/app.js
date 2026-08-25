@@ -6,6 +6,7 @@ const scriptQueue = [
   'assets/js/featured-product.js',
   'assets/js/navigation.js',
   'assets/js/text-highlight-scroll.js',
+  'assets/js/marquee-parallax.js',
   'assets/js/motion.js'
 ];
 
