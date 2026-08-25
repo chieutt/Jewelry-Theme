@@ -39,6 +39,13 @@
     { selector: ':scope > svg', amount: -82, mobileAmount: -32 }
   ]);
 
+  // Countdown: split the editorial copy, numerals and footer into three depth planes.
+  addSection('[data-section="10 Countdown timer"]', [
+    { selector: '.launch-ledger-top', amount: -28, mobileAmount: -12 },
+    { selector: '.launch-ledger-clock', amount: 46, mobileAmount: 18 },
+    { selector: '.launch-ledger-bottom', amount: -16, mobileAmount: -7 }
+  ]);
+
   // Atelier collage: opposing speeds make the three frames feel physically layered.
   addSection('[data-section="11 Image with Text"]', [
     { selector: '.atelier-editorial-frame--a', amount: -42, mobileAmount: -20 },
@@ -47,25 +54,8 @@
     { selector: '.atelier-editorial-caption', amount: 16, mobileAmount: 8 }
   ]);
 
-  // Social collage: desktop only, because mobile is already a horizontal swipe rail.
-  const socialSection = document.querySelector('[data-section="17 Instagram gallery"]');
-  if (socialSection) {
-    const socialItems = [...socialSection.querySelectorAll('.social-runway-item')];
-    const socialAmounts = [-28, 54, -36, 68, -42];
-
-    const targets = socialItems.map((node, index) => ({
-      node,
-      amount: socialAmounts[index] ?? (index % 2 === 0 ? -32 : 48),
-      desktopOnly: true
-    }));
-
-    if (targets.length) {
-      targets.forEach(({ node }) => {
-        node.style.willChange = 'translate';
-      });
-      sections.push({ section: socialSection, targets, mobileScale: 0 });
-    }
-  }
+  // Instagram intentionally stays static. Its asymmetric grid already creates depth,
+  // and translating the cards can fight the generated rail/layout on some breakpoints.
 
   if (!sections.length) return;
 
