@@ -33,7 +33,11 @@
     }
 
     const rect = section.getBoundingClientRect();
-    const scrollable = section.offsetHeight - window.innerHeight;
+
+    // Keep the original 3-screen story timing, while reserving the final
+    // viewport for the next section to slide over the sticky atelier frame.
+    const overlapDistance = window.innerHeight;
+    const scrollable = section.offsetHeight - window.innerHeight - overlapDistance;
     if (scrollable <= 0) return;
 
     const progress = Math.max(0, Math.min(0.9999, -rect.top / scrollable));
