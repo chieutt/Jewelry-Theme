@@ -47,6 +47,33 @@ html.motion-ready .motion-reveal.motion-complete{
   font-variant-numeric:tabular-nums;
 }
 
+/* 03B — scroll-driven gray -> ink text fill. */
+[data-section="03B Text Highlight"]{
+  --highlight-fill-color:var(--ink);
+  --highlight-muted-color:color-mix(in srgb,var(--ink) 22%,var(--surface-white));
+}
+
+[data-section="03B Text Highlight"].is-scroll-highlight-ready .text-highlight-token{
+  display:inline;
+  background-image:linear-gradient(
+    90deg,
+    var(--highlight-fill-color) 0,
+    var(--highlight-fill-color) var(--highlight-fill-stop,0%),
+    var(--highlight-muted-color) var(--highlight-fill-stop,0%),
+    var(--highlight-muted-color) 100%
+  );
+  background-repeat:no-repeat;
+  background-clip:text;
+  color:transparent!important;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent!important;
+}
+
+[data-section="03B Text Highlight"].is-scroll-highlight-ready .text-highlight-muted{
+  color:inherit!important;
+  opacity:1!important;
+}
+
 @media(max-width:760px){
   :root{
     --motion-duration:680ms;
@@ -61,5 +88,11 @@ html.motion-ready .motion-reveal.motion-complete{
     opacity:1!important;
     translate:none!important;
     transition:none!important;
+  }
+
+  [data-section="03B Text Highlight"].is-scroll-highlight-ready .text-highlight-token{
+    background:none!important;
+    color:var(--highlight-fill-color)!important;
+    -webkit-text-fill-color:currentColor!important;
   }
 }
