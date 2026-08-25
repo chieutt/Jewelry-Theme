@@ -6,81 +6,97 @@
   if (!lines.length) return;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const directions = [1, -1, 0.72];
-
-  let frame = 0;
-  let currentProgress = 0.5;
-  let targetProgress = 0.5;
-  let active = false;
-
-  section.style.overflow = 'clip';
-  lines.forEach((line) => {
-    line.style.willChange = 'transform';
-    line.style.transformOrigin = 'center center';
-  });
-
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
-  const getDistance = () => {
-    if (window.innerWidth <= 760) {
-      return clamp(window.innerWidth * 0.08, 22, 36);
-    }
-    return clamp(window.innerWidth * 0.075, 52, 128);
+  const shouldSkipTextNode = (node) => {
+    const parent = node.parentElement;
+    if (!parent) return true;
+    return Boolean(parent.closest('.text-highlight-thumb, svg, script, style'));
   };
 
-  const measure = () => {
-    if (reduceMotion.matches) {
-      targetProgress = 0.5;
-      active = true;
-      requestTick();
-      return;
+  const tokenizeLine = (line) => {
+    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (!node.nodeValue?.trim() || shouldSkipTextNode(node)) continue;
+      textNodes.push(node);
     }
 
-    const rect = section.getBoundingClientRect();
-    const viewport = window.innerHeight || document.documentElement.clientHeight;
-    targetProgress = clamp((viewport - rect.top) / (viewport + rect.height), 0, 1);
-    active = rect.bottom > -viewport * 0.15 && rect.top < viewport * 1.15;
-    if (active) requestTick();
+    textNodes.forEach((node) => {
+      const fragment = document.createDocumentFragment();
+      const parts = node.nodeValue.split(/(\s+)/);
+
+      parts.forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) {
+          fragment.appendChild(document.createTextNode(part));
+          return;
+        }
+
+        const token = document.createElement('span');
+        token.className = 'text-highlight-token';
+        token.textContent = part;
+        token.style.setProperty('--highlight-fill-stop', '0%');
+        fragment.appendChild(token);
+      });
+
+      node.replaceWith(fragment);
+    });
   };
+
+  lines.forEach((line) => {
+    line.style.removeProperty('transform');
+    line.style.removeProperty('will-change');
+    line.style.removeProperty('transform-origin');
+    tokenizeLine(line);
+  });
+
+  const tokens = [...section.querySelectorAll('.text-highlight-token')];
+  if (!tokens.length) return;
+
+  section.classList.add('is-scroll-highlight-ready');
+
+  let frame = 0;
 
   const render = () => {
     frame = 0;
 
     if (reduceMotion.matches) {
-      currentProgress = 0.5;
-    } else {
-      currentProgress += (targetProgress - currentProgress) * 0.16;
+      tokens.forEach((token) => token.style.setProperty('--highlight-fill-stop', '100%'));
+      return;
     }
 
-    const normalized = (currentProgress - 0.5) * 2;
-    const distance = getDistance();
+    const rect = section.getBoundingClientRect();
+    const viewport = window.innerHeight || document.documentElement.clientHeight;
 
-    lines.forEach((line, index) => {
-      const direction = directions[index] ?? (index % 2 === 0 ? 1 : -1);
-      const x = normalized * distance * direction;
-      line.style.transform = `translate3d(${x.toFixed(2)}px, 0, 0)`;
+    // Start filling when the section reaches ~80% of the viewport and finish
+    // when its bottom reaches ~25%, giving the text a long scroll-driven sweep.
+    const startY = viewport * 0.8;
+    const endBottomY = viewport * 0.25;
+    const travel = rect.height + startY - endBottomY;
+    const progress = clamp((startY - rect.top) / Math.max(1, travel), 0, 1);
+
+    // Let neighboring words overlap slightly so the fill reads as one continuous
+    // left-to-right / top-to-bottom sweep instead of discrete word jumps.
+    const overlap = 1.35;
+    const cursor = progress * (tokens.length - 1 + overlap);
+
+    tokens.forEach((token, index) => {
+      const localProgress = clamp((cursor - index) / overlap, 0, 1);
+      token.style.setProperty('--highlight-fill-stop', `${(localProgress * 100).toFixed(2)}%`);
     });
-
-    if (!reduceMotion.matches && active && Math.abs(targetProgress - currentProgress) > 0.001) {
-      frame = requestAnimationFrame(render);
-    }
   };
 
-  function requestTick() {
+  const requestRender = () => {
     if (frame) return;
     frame = requestAnimationFrame(render);
-  }
-
-  const requestMeasure = () => {
-    measure();
   };
 
-  window.addEventListener('scroll', requestMeasure, { passive: true });
-  window.addEventListener('resize', requestMeasure);
+  window.addEventListener('scroll', requestRender, { passive: true });
+  window.addEventListener('resize', requestRender);
+  reduceMotion.addEventListener?.('change', requestRender);
 
-  reduceMotion.addEventListener?.('change', () => {
-    measure();
-  });
-
-  measure();
+  requestRender();
 })();
