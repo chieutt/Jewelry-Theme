@@ -5,6 +5,7 @@ const scriptQueue = [
   'assets/js/sticky-atelier.js',
   'assets/js/featured-product.js',
   'assets/js/navigation.js',
+  'assets/js/text-highlight-scroll.js',
   'assets/js/motion.js'
 ];
 
