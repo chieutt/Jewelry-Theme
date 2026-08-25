@@ -5,6 +5,7 @@
 
   const excludedSections = new Set([
     '01 Editorial slideshow',
+    '03B Text Highlight',
     '12 Image Stack'
   ]);
 
