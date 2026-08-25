@@ -39,11 +39,13 @@
     { selector: ':scope > svg', amount: -82, mobileAmount: -32 }
   ]);
 
-  // Editorial pair: move both halves as opposing depth planes.
+  // Editorial pair: keep both background panels locked to the grid and move only
+  // the artwork/copy inside them so the box edges always stay perfectly aligned.
   addSection('[data-section="04 Highlight text with image"]', [
-    { selector: '.highlight-image', amount: 30, mobileAmount: 10 },
-    { selector: '.highlight-copy', amount: -24, mobileAmount: -8 },
-    { selector: '.highlight-image svg', amount: 18, mobileAmount: 6 }
+    { selector: '.highlight-image svg', amount: 30, mobileAmount: 10 },
+    { selector: '.highlight-copy blockquote', amount: -22, mobileAmount: -7 },
+    { selector: '.highlight-copy > p', amount: -14, mobileAmount: -5 },
+    { selector: '.highlight-copy .highlight-action', amount: -8, mobileAmount: -3 }
   ]);
 
   // Countdown: split the editorial copy, numerals and footer into three depth planes.
