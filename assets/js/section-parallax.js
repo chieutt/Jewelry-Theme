@@ -9,12 +9,11 @@
     if (!section) return;
 
     const resolvedTargets = targets
-      .map(({ selector: targetSelector, amount, mobileAmount, minWidth = 0, liveFactor = 0 }) => ({
+      .map(({ selector: targetSelector, amount, mobileAmount, minWidth = 0 }) => ({
         node: section.querySelector(targetSelector),
         amount,
         mobileAmount,
-        minWidth,
-        liveFactor
+        minWidth
       }))
       .filter((item) => item.node instanceof HTMLElement || item.node instanceof SVGElement);
 
@@ -100,33 +99,14 @@
     { selector: '.testimonial-feature-meta', amount: -12, mobileAmount: -4 }
   ]);
 
-  // Instagram: desktop cards get position parallax plus a small live velocity response.
-  // The liveFactor makes the offset visible while the wheel/trackpad is actively moving,
-  // then it decays quickly back into the normal scroll-position parallax.
-  addSection('[data-section="17 Instagram gallery"]', [
-    { selector: '.social-runway-item--1', amount: -24, minWidth: 1001, liveFactor: -0.95 },
-    { selector: '.social-runway-item--2', amount: 38, minWidth: 1001, liveFactor: 1.15 },
-    { selector: '.social-runway-item--3', amount: -30, minWidth: 1001, liveFactor: -1.05 },
-    { selector: '.social-runway-item--4', amount: 46, minWidth: 1001, liveFactor: 1.3 },
-    { selector: '.social-runway-item--5', amount: -34, minWidth: 1001, liveFactor: -1.15 },
-    { selector: '.social-runway-item--1 .social-runway-media svg', amount: -34, minWidth: 1001, liveFactor: -0.45 },
-    { selector: '.social-runway-item--2 .social-runway-media svg', amount: 50, minWidth: 1001, liveFactor: 0.55 },
-    { selector: '.social-runway-item--3 .social-runway-media svg', amount: -42, minWidth: 1001, liveFactor: -0.5 },
-    { selector: '.social-runway-item--4 .social-runway-media svg', amount: 62, minWidth: 1001, liveFactor: 0.62 },
-    { selector: '.social-runway-item--5 .social-runway-media svg', amount: -48, minWidth: 1001, liveFactor: -0.55 }
-  ]);
+  // Instagram is intentionally excluded here. It uses native CSS view timelines in
+  // instagram-parallax.css so the motion stays synchronized with compositor scrolling.
 
   if (!sections.length) return;
 
   let frame = 0;
-  let lastScrollY = window.scrollY || window.pageYOffset || 0;
-  let liveVelocity = 0;
-  let liveTarget = 0;
-  let activeUntil = 0;
 
   const reset = () => {
-    liveVelocity = 0;
-    liveTarget = 0;
     sections.forEach(({ targets }) => {
       targets.forEach(({ node }) => {
         node.style.translate = 'none';
@@ -134,7 +114,7 @@
     });
   };
 
-  const render = (now = performance.now()) => {
+  const render = () => {
     frame = 0;
 
     if (reduceMotion.matches) {
@@ -146,12 +126,6 @@
     const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
     const isMobile = viewportWidth <= 760;
 
-    // Follow the current scroll impulse while scrolling, then settle quickly.
-    liveVelocity += (liveTarget - liveVelocity) * 0.34;
-    if (now > activeUntil) liveTarget *= 0.72;
-    if (Math.abs(liveTarget) < 0.02) liveTarget = 0;
-    if (Math.abs(liveVelocity) < 0.02 && liveTarget === 0) liveVelocity = 0;
-
     sections.forEach(({ section, targets, mobileScale }) => {
       const rect = section.getBoundingClientRect();
 
@@ -160,7 +134,7 @@
       const progress = clamp((viewport - rect.top) / (viewport + rect.height), 0, 1);
       const normalized = (progress - 0.5) * 2;
 
-      targets.forEach(({ node, amount, mobileAmount, minWidth, liveFactor }) => {
+      targets.forEach(({ node, amount, mobileAmount, minWidth }) => {
         if (viewportWidth < minWidth) {
           node.style.translate = 'none';
           return;
@@ -169,15 +143,10 @@
         const effectiveAmount = isMobile
           ? (Number.isFinite(mobileAmount) ? mobileAmount : amount * mobileScale)
           : amount;
-        const liveOffset = liveFactor ? liveVelocity * liveFactor : 0;
-        const y = normalized * effectiveAmount + liveOffset;
+        const y = normalized * effectiveAmount;
         node.style.translate = `0 ${y.toFixed(2)}px`;
       });
     });
-
-    if (now <= activeUntil || liveTarget !== 0 || liveVelocity !== 0) {
-      frame = requestAnimationFrame(render);
-    }
   };
 
   const requestRender = () => {
@@ -185,17 +154,7 @@
     frame = requestAnimationFrame(render);
   };
 
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY || window.pageYOffset || 0;
-    const delta = currentScrollY - lastScrollY;
-    lastScrollY = currentScrollY;
-
-    liveTarget = clamp(delta * 1.8, -22, 22);
-    activeUntil = performance.now() + 110;
-    requestRender();
-  };
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('scroll', requestRender, { passive: true });
   window.addEventListener('resize', requestRender);
   reduceMotion.addEventListener?.('change', requestRender);
 
