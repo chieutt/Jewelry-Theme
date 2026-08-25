@@ -9,11 +9,11 @@
     if (!section) return;
 
     const resolvedTargets = targets
-      .map(({ selector: targetSelector, amount, mobileAmount, desktopOnly = false }) => ({
+      .map(({ selector: targetSelector, amount, mobileAmount, minWidth = 0 }) => ({
         node: section.querySelector(targetSelector),
         amount,
         mobileAmount,
-        desktopOnly
+        minWidth
       }))
       .filter((item) => item.node instanceof HTMLElement || item.node instanceof SVGElement);
 
@@ -54,8 +54,15 @@
     { selector: '.atelier-editorial-caption', amount: 16, mobileAmount: 8 }
   ]);
 
-  // Instagram intentionally stays static. Its asymmetric grid already creates depth,
-  // and translating the cards can fight the generated rail/layout on some breakpoints.
+  // Instagram: keep the card/grid geometry fixed and move only the artwork inside
+  // each clipped media frame. This avoids fighting the <=1000px horizontal rail.
+  addSection('[data-section="17 Instagram gallery"]', [
+    { selector: '.social-runway-item--1 .social-runway-media svg', amount: -30, minWidth: 1001 },
+    { selector: '.social-runway-item--2 .social-runway-media svg', amount: 46, minWidth: 1001 },
+    { selector: '.social-runway-item--3 .social-runway-media svg', amount: -38, minWidth: 1001 },
+    { selector: '.social-runway-item--4 .social-runway-media svg', amount: 58, minWidth: 1001 },
+    { selector: '.social-runway-item--5 .social-runway-media svg', amount: -44, minWidth: 1001 }
+  ]);
 
   if (!sections.length) return;
 
@@ -78,7 +85,8 @@
     }
 
     const viewport = window.innerHeight || document.documentElement.clientHeight;
-    const isMobile = window.innerWidth <= 760;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const isMobile = viewportWidth <= 760;
 
     sections.forEach(({ section, targets, mobileScale }) => {
       const rect = section.getBoundingClientRect();
@@ -89,8 +97,8 @@
       const progress = clamp((viewport - rect.top) / (viewport + rect.height), 0, 1);
       const normalized = (progress - 0.5) * 2;
 
-      targets.forEach(({ node, amount, mobileAmount, desktopOnly }) => {
-        if (desktopOnly && isMobile) {
+      targets.forEach(({ node, amount, mobileAmount, minWidth }) => {
+        if (viewportWidth < minWidth) {
           node.style.translate = 'none';
           return;
         }
