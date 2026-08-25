@@ -39,6 +39,13 @@
     { selector: ':scope > svg', amount: -82, mobileAmount: -32 }
   ]);
 
+  // Editorial pair: move both halves as opposing depth planes.
+  addSection('[data-section="04 Highlight text with image"]', [
+    { selector: '.highlight-image', amount: 30, mobileAmount: 10 },
+    { selector: '.highlight-copy', amount: -24, mobileAmount: -8 },
+    { selector: '.highlight-image svg', amount: 18, mobileAmount: 6 }
+  ]);
+
   // Countdown: split the editorial copy, numerals and footer into three depth planes.
   addSection('[data-section="10 Countdown timer"]', [
     { selector: '.launch-ledger-top', amount: -28, mobileAmount: -12 },
@@ -46,17 +53,23 @@
     { selector: '.launch-ledger-bottom', amount: -16, mobileAmount: -7 }
   ]);
 
-  // Atelier collage: opposing speeds make the three frames feel physically layered.
+  // Atelier editorial: drift the full media/copy columns, then add secondary motion
+  // to the individual image frames so the collage retains multiple depth levels.
   addSection('[data-section="11 Image with Text"]', [
+    { selector: '.atelier-editorial-media', amount: 18, mobileAmount: 8 },
+    { selector: '.atelier-editorial-copy', amount: -30, mobileAmount: -12 },
     { selector: '.atelier-editorial-frame--a', amount: -42, mobileAmount: -20 },
     { selector: '.atelier-editorial-frame--b', amount: 62, mobileAmount: 28 },
     { selector: '.atelier-editorial-frame--c', amount: -28, mobileAmount: -14 },
     { selector: '.atelier-editorial-caption', amount: 16, mobileAmount: 8 }
   ]);
 
-  // Image Stack: keep sticky/step geometry untouched and drift only the artwork
-  // inside each clipped study frame. The movement stays intentionally subtle.
+  // Image Stack: preserve sticky/step geometry while letting both story copy and
+  // artwork drift inside the pinned scene. Disabled on the stacked mobile layout.
   addSection('[data-section="12 Image Stack"]', [
+    { selector: '.atelier-scroll-copy-stage', amount: -20, minWidth: 761 },
+    { selector: '.atelier-scroll-dots', amount: -8, minWidth: 761 },
+    { selector: '.atelier-scroll-media', amount: 10, minWidth: 761 },
     { selector: '.atelier-scroll-image[data-step="0"] svg', amount: 28, minWidth: 761 },
     { selector: '.atelier-scroll-image[data-step="1"] svg', amount: -22, minWidth: 761 },
     { selector: '.atelier-scroll-image[data-step="2"] svg', amount: 26, minWidth: 761 },
@@ -65,9 +78,22 @@
     { selector: '.atelier-scroll-image[data-step="2"] figcaption', amount: -7, minWidth: 761 }
   ]);
 
-  // Instagram: keep the card/grid geometry fixed and move only the artwork inside
-  // each clipped media frame. This avoids fighting the <=1000px horizontal rail.
+  // Testimonial: restrained typography parallax so the quote remains the focal point.
+  addSection('[data-section="16 Testimonials"]', [
+    { selector: '.testimonial-feature-top', amount: -14, mobileAmount: -5 },
+    { selector: '.testimonial-feature-quote', amount: 28, mobileAmount: 9 },
+    { selector: '.testimonial-feature-meta', amount: -12, mobileAmount: -4 }
+  ]);
+
+  // Instagram: on desktop, move each card as a layer and move the artwork inside it
+  // again for nested depth. <=1000px stays untouched because the layout becomes a
+  // horizontal scroll-snap rail there.
   addSection('[data-section="17 Instagram gallery"]', [
+    { selector: '.social-runway-item--1', amount: -18, minWidth: 1001 },
+    { selector: '.social-runway-item--2', amount: 30, minWidth: 1001 },
+    { selector: '.social-runway-item--3', amount: -24, minWidth: 1001 },
+    { selector: '.social-runway-item--4', amount: 36, minWidth: 1001 },
+    { selector: '.social-runway-item--5', amount: -28, minWidth: 1001 },
     { selector: '.social-runway-item--1 .social-runway-media svg', amount: -30, minWidth: 1001 },
     { selector: '.social-runway-item--2 .social-runway-media svg', amount: 46, minWidth: 1001 },
     { selector: '.social-runway-item--3 .social-runway-media svg', amount: -38, minWidth: 1001 },
