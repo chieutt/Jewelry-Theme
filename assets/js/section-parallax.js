@@ -54,6 +54,17 @@
     { selector: '.atelier-editorial-caption', amount: 16, mobileAmount: 8 }
   ]);
 
+  // Image Stack: keep sticky/step geometry untouched and drift only the artwork
+  // inside each clipped study frame. The movement stays intentionally subtle.
+  addSection('[data-section="12 Image Stack"]', [
+    { selector: '.atelier-scroll-image[data-step="0"] svg', amount: 28, minWidth: 761 },
+    { selector: '.atelier-scroll-image[data-step="1"] svg', amount: -22, minWidth: 761 },
+    { selector: '.atelier-scroll-image[data-step="2"] svg', amount: 26, minWidth: 761 },
+    { selector: '.atelier-scroll-image[data-step="0"] figcaption', amount: -7, minWidth: 761 },
+    { selector: '.atelier-scroll-image[data-step="1"] figcaption', amount: 6, minWidth: 761 },
+    { selector: '.atelier-scroll-image[data-step="2"] figcaption', amount: -7, minWidth: 761 }
+  ]);
+
   // Instagram: keep the card/grid geometry fixed and move only the artwork inside
   // each clipped media frame. This avoids fighting the <=1000px horizontal rail.
   addSection('[data-section="17 Instagram gallery"]', [
