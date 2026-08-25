@@ -48,6 +48,18 @@
     { selector: '.highlight-copy .highlight-action', amount: -8, mobileAmount: -3 }
   ]);
 
+  // Collection studies: keep the mosaic geometry fixed while the header and each
+  // artwork plane drift at different speeds. SVG hover transforms remain independent.
+  addSection('[data-section="05 Collection list split promotions"]', [
+    { selector: '.collection-studies-head > div:first-child', amount: -18, mobileAmount: -7 },
+    { selector: '.collection-studies-aside', amount: 14, mobileAmount: 5 },
+    { selector: '.collection-study--nocturne .collection-study-art svg', amount: -34, mobileAmount: -11 },
+    { selector: '.collection-study--arc .collection-study-art svg', amount: 20, mobileAmount: 7 },
+    { selector: '.collection-study--linea .collection-study-art svg', amount: -24, mobileAmount: -8 },
+    { selector: '.collection-study--daily .collection-study-art svg', amount: 28, mobileAmount: 9 },
+    { selector: '.collection-study--form .collection-study-art svg', amount: -38, mobileAmount: -12 }
+  ]);
+
   // Countdown: split the editorial copy, numerals and footer into three depth planes.
   addSection('[data-section="10 Countdown timer"]', [
     { selector: '.launch-ledger-top', amount: -28, mobileAmount: -12 },
