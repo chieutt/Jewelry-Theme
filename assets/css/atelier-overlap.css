@@ -1,6 +1,6 @@
-/* Desktop atelier-to-next-section overlap transition.
-   The atelier gets one extra viewport of sticky runway; the next section is
-   pulled up by that same viewport so it slides over the final atelier frame. */
+/* Desktop stacked-section transitions.
+   Atelier holds its final frame while Gift Spinel slides over it. Gift Spinel
+   then gets its own one-viewport sticky runway so Shop the Look can slide over. */
 @media (min-width: 761px) {
   .atelier-scroll {
     height: 400svh;
@@ -11,9 +11,24 @@
     z-index: 1;
   }
 
-  .atelier-scroll + .gift-bundle {
+  .atelier-scroll + .gift-bundle-scroll {
     position: relative;
     z-index: 2;
+    height: calc(max(100svh, 680px) + 100svh);
     margin-top: -100svh;
+  }
+
+  .gift-bundle-scroll .gift-bundle {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: max(100svh, 680px);
+    min-height: max(100svh, 680px);
+  }
+
+  .gift-bundle-scroll + [data-section="09 Shop the look"] {
+    position: relative;
+    z-index: 3;
+    margin: -100svh auto 96px !important;
   }
 }
