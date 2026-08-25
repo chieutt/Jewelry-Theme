@@ -1,0 +1,1 @@
+Hero slideshow imagery for fill-images review branch. Generated 2026-08-25. Preview-only until approved for merge.
