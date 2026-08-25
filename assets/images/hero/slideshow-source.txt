@@ -1,1 +1,0 @@
-Images rendered in 16:9 slideshow ratio; binary asset upload follows in branch history.
