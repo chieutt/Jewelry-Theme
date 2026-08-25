@@ -1,0 +1,19 @@
+/* Desktop atelier-to-next-section overlap transition.
+   The atelier gets one extra viewport of sticky runway; the next section is
+   pulled up by that same viewport so it slides over the final atelier frame. */
+@media (min-width: 761px) {
+  .atelier-scroll {
+    height: 400svh;
+    z-index: 0;
+  }
+
+  .atelier-scroll-sticky {
+    z-index: 1;
+  }
+
+  .atelier-scroll + .gift-bundle {
+    position: relative;
+    z-index: 2;
+    margin-top: -100svh;
+  }
+}
